@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Школьный Спорт РБ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#1b2330; --line:#2a3442;
+  --text:#e6edf3; --muted:#8b98a9; --accent:#22c55e; --danger:#ef4444; --warn:#eab308;
+}
+body{
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:radial-gradient(1200px 600px at 50% -10%, #16301f 0%, var(--bg) 55%);
+  color:var(--text); min-height:100vh; padding-bottom:60px;
+}
+header{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+  background:rgba(13,17,23,.82); border-bottom:1px solid var(--line);
+}
+.header-in{max-width:1180px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:19px;white-space:nowrap}
+.logo span{color:var(--accent)}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+nav button{
+  background:transparent;border:1px solid transparent;color:var(--muted);
+  padding:8px 14px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;
+  transition:.18s;font-family:inherit;
+}
+nav button:hover{color:var(--text);background:var(--panel)}
+nav button.active{color:#04160a;background:var(--accent);border-color:var(--accent)}
+nav button.admin{color:#f5d76e}
+nav button.admin.active{background:var(--warn);color:#1a1a1a;border-color:var(--warn)}
+.profile-btn{
+  background:var(--panel2);border:1px solid var(--line);border-radius:50%;
+  width:42px;height:42px;cursor:pointer;display:grid;place-items:center;
+  color:var(--text);font-weight:800;font-size:14px;transition:.18s;flex-shrink:0;
+}
+.profile-btn:hover{border-color:var(--accent);color:#7ff0a4;transform:scale(1.05)}
+.admin-badge{
+  background:var(--warn);color:#1a1a1a;font-size:10px;font-weight:800;
+  padding:4px 9px;border-radius:6px;letter-spacing:.5px;
+}
+main{max-width:1180px;margin:0 auto;padding:28px 20px}
+.tab{display:none;animation:fade .25s ease}
+.tab.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+h1{font-size:26px;margin-bottom:6px}
+h2{font-size:20px;margin-bottom:16px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:20px}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:14px}
+label > select,label > input,label > textarea{
+  display:block;width:100%;margin-top:7px;padding:11px 13px;border-radius:10px;
+  border:1px solid var(--line);background:var(--panel2);color:var(--text);
+  font-size:14px;font-family:inherit;outline:none;transition:.18s;
+}
+select:focus,input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+select:disabled{opacity:.45;cursor:not-allowed}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.sports{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:4px 0 18px}
+@media(max-width:640px){.sports{grid-template-columns:1fr}}
+.sport-card input{display:none}
+.sport-card span{
+  display:flex;align-items:center;justify-content:center;gap:8px;padding:16px 10px;
+  border:2px solid var(--line);border-radius:14px;background:var(--panel2);
+  cursor:pointer;font-weight:700;font-size:15px;transition:.18s;
+}
+.sport-card input:checked + span{border-color:var(--accent);background:rgba(34,197,94,.12);color:#7ff0a4}
+.player-row{display:grid;grid-template-columns:1fr 90px 42px;gap:8px;margin-bottom:8px}
+.player-row input{
+  padding:10px 12px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--text);font-size:14px;font-family:inherit;outline:none;width:100%;
+}
+.btn{
+  background:var(--accent);color:#04160a;border:none;padding:13px 22px;border-radius:11px;
+  font-weight:800;font-size:15px;cursor:pointer;transition:.18s;font-family:inherit;
+}
+.btn:hover{background:#2ee06a;transform:translateY(-1px)}
+.btn.sm{padding:8px 13px;font-size:13px;border-radius:9px}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn.danger{background:transparent;border:1px solid #5c2323;color:#ff8a8a}
+.btn.warn{background:var(--warn);color:#1a1a1a}
+.icon-btn{
+  background:var(--panel2);border:1px solid var(--line);color:var(--muted);
+  border-radius:10px;cursor:pointer;font-size:14px;width:42px;height:42px;
+  display:grid;place-items:center;transition:.18s;
+}
+.icon-btn:hover{border-color:var(--danger);color:#ff8a8a}
+.filters{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:12px;margin-bottom:18px}
+@media(max-width:700px){.filters{grid-template-columns:1fr}}
+.filters select,.filters input{
+  padding:11px 13px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel);color:var(--text);font-size:14px;font-family:inherit;outline:none;width:100%;
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:16px}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;
+  transition:.2s;position:relative;
+}
+.card:hover{border-color:#3d4b5c;transform:translateY(-2px)}
+.team-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.team-top h3{font-size:17px;line-height:1.25}
+.badge{font-size:11px;font-weight:800;padding:5px 9px;border-radius:20px;white-space:nowrap}
+.s-football{background:rgba(34,197,94,.15);color:#7ff0a4}
+.s-basketball{background:rgba(249,115,22,.15);color:#ffb27a}
+.s-tennis{background:rgba(234,179,8,.15);color:#f5d76e}
+.s-volleyball{background:rgba(59,130,246,.15);color:#93c5fd}
+.s-mine{background:rgba(34,197,94,.25);color:#7ff0a4;border:1px solid #2a5e3f}
+.s-pending{background:rgba(234,179,8,.2);color:#f5d76e;border:1px solid #7a6a22}
+.meta{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:6px}
+.score-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0;text-align:center}
+.score-row > div{background:var(--panel2);border-radius:10px;padding:9px 4px}
+.score-row b{display:block;font-size:16px;color:#7ff0a4}
+.score-row span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap}
+.players{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:20px;padding:4px 10px;font-size:12px;color:var(--muted)}
+.empty{
+  text-align:center;padding:50px 20px;color:var(--muted);
+  border:2px dashed var(--line);border-radius:16px;font-size:15px;
+}
+.table-wrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line);margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:640px}
+th{
+  background:var(--panel2);color:var(--muted);font-size:11px;text-transform:uppercase;
+  letter-spacing:.6px;padding:13px 12px;text-align:left;font-weight:700;white-space:nowrap;
+}
+td{padding:13px 12px;border-top:1px solid var(--line)}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+.rank{font-weight:800;color:var(--muted);width:40px}
+.rank.top{color:var(--accent)}
+.pts{font-weight:800;color:#7ff0a4}
+.city-section{margin-bottom:32px}
+.city-section > h2{
+  font-size:18px;margin-bottom:16px;padding-bottom:10px;
+  border-bottom:2px solid var(--accent);color:var(--accent);
+}
+.district-block{margin-bottom:22px}
+.district-block > h3{
+  font-size:13px;color:var(--muted);margin-bottom:10px;
+  text-transform:uppercase;letter-spacing:.5px;font-weight:700;
+}
+.tournament-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.tournament-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:18px;cursor:pointer;transition:.2s;
+}
+.tournament-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;
+  align-items:center;justify-content:center;padding:20px;z-index:100;
+}
+.modal.open{display:flex}
+.modal-box{
+  background:var(--panel);border:1px solid var(--line);border-radius:18px;
+  padding:26px;width:100%;max-width:440px;animation:fade .2s;
+}
+.modal-box.large{max-width:960px;max-height:92vh;overflow-y:auto}
+.modal-box h3{margin-bottom:14px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.team-checkboxes{
+  max-height:280px;overflow-y:auto;border:1px solid var(--line);
+  border-radius:10px;padding:10px;margin-bottom:16px;background:var(--panel2);
+}
+.team-checkboxes label{
+  display:flex;align-items:center;gap:10px;padding:7px 6px;
+  border-radius:6px;cursor:pointer;margin-bottom:2px;
+  font-weight:500;color:var(--text);font-size:14px;
+}
+.team-checkboxes label:hover{background:rgba(255,255,255,.03)}
+.team-checkboxes input{width:18px;height:18px;accent-color:var(--accent);margin:0}
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:20px}
+.group-block{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px}
+.group-block h4{margin-bottom:10px;color:var(--accent);font-size:14px}
+.group-block table{min-width:0;font-size:12px}
+.group-block th,.group-block td{padding:7px 5px}
+.mini-match{
+  display:flex;align-items:center;gap:6px;justify-content:space-between;
+  padding:8px;margin-top:8px;background:var(--panel);border-radius:8px;
+  font-size:12px;flex-wrap:wrap;
+}
+.mini-match .tiny{width:44px;padding:4px;text-align:center;border-radius:6px;
+  border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:12px}
+.mini-match button{padding:4px 9px;font-size:11px;border:none;background:var(--accent);
+  color:#04160a;border-radius:6px;cursor:pointer;font-weight:700}
+.bracket{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;margin-bottom:20px}
+.round-block{
+  min-width:250px;flex-shrink:0;background:var(--panel2);
+  border:1px solid var(--line);border-radius:12px;padding:14px;
+}
+.round-block h4{margin-bottom:10px;color:var(--accent);font-size:13px}
+.bracket-match{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;padding:9px;margin-bottom:6px;background:var(--panel);
+  border-radius:8px;font-size:12px;flex-wrap:wrap;
+}
+.bracket-match .score{font-weight:800;color:#7ff0a4;white-space:nowrap}
+.bracket-match .winner{color:#7ff0a4;font-weight:700}
+.bracket-match.pending{color:var(--muted)}
+.bracket-match .tiny{width:42px;padding:3px;text-align:center;border-radius:5px;
+  border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:12px}
+.bracket-match button{padding:3px 8px;font-size:11px;border:none;background:var(--accent);
+  color:#04160a;border-radius:5px;cursor:pointer;font-weight:700}
+.champion-banner{
+  background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1a1a;
+  padding:16px;border-radius:12px;text-align:center;
+  font-weight:800;font-size:16px;margin-top:20px;
+}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;text-align:center}
+.stat b{display:block;font-size:28px;color:#7ff0a4;margin-bottom:4px}
+.stat span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.bar-row{margin-bottom:14px}
+.bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.bar-label span:last-child{color:var(--muted)}
+.bar{height:10px;background:var(--panel2);border-radius:6px;overflow:hidden}
+.bar > i{display:block;height:100%;border-radius:6px;transition:width .5s}
+#toasts{position:fixed;bottom:22px;right:22px;display:flex;flex-direction:column;gap:10px;z-index:200}
+.toast{
+  background:var(--panel);border:1px solid var(--accent);color:var(--text);
+  padding:13px 18px;border-radius:12px;font-size:14px;font-weight:600;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);animation:fade .25s;max-width:320px;
+}
+.toast.err{border-color:var(--danger)}
+.toast.warn{border-color:var(--warn)}
+.toast.out{opacity:0;transform:translateX(20px);transition:.3s}
+.auth-screen{
+  position:fixed;inset:0;z-index:1000;
+  background:radial-gradient(1200px 600px at 50% -10%, #16301f 0%, #0d1117 60%);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.auth-screen.open{display:flex}
+.auth-box{
+  background:var(--panel);border:1px solid var(--line);border-radius:22px;
+  padding:36px 32px;width:100%;max-width:440px;animation:fade .3s;
+}
+.auth-logo{font-weight:800;font-size:22px;margin-bottom:6px;text-align:center}
+.auth-logo span{color:var(--accent)}
+.auth-box h2{text-align:center;margin-bottom:6px;font-size:22px}
+.auth-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.5}
+.auth-box .btn{width:100%;margin-top:6px}
+.profile-head{
+  display:flex;gap:18px;align-items:center;margin-bottom:22px;
+  padding-bottom:22px;border-bottom:1px solid var(--line);
+}
+.avatar{
+  width:42px;height:42px;border-radius:50%;background:var(--accent);
+  color:#04160a;display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0;
+  user-select:none;
+}
+.avatar.big{width:72px;height:72px;font-size:24px}
+.avatar.admin{background:var(--warn)}
+.profile-name{font-size:20px;font-weight:800;margin-bottom:4px}
+.profile-list{list-style:none;margin-top:10px}
+.profile-list li{
+  padding:10px 12px;background:var(--panel2);border:1px solid var(--line);
+  border-radius:10px;margin-bottom:8px;font-size:14px;display:flex;
+  justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.profile-list li b{color:var(--text)}
+.profile-list li span{color:var(--muted);font-size:13px}
+.mod-stat{
+  display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  padding:14px;background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.3);
+  border-radius:12px;margin-bottom:20px;
+}
+.mod-stat b{color:var(--warn);font-size:22px}
+/* Скрытая панель админа в профиле */
+#adminUnlock{
+  display:none;margin-top:22px;padding-top:22px;
+  border-top:1px dashed var(--line);
+}
+#adminUnlock.show{display:block;animation:fade .25s}
+</style>
+</head>
+<body>
+
+<!-- ЭКРАН ВХОДА -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">🏆 Школьный <span>Спорт</span> РБ</div>
+    <h2>Добро пожаловать!</h2>
+    <p class="auth-sub">Войдите, чтобы регистрировать команды, создавать турниры и следить за таблицами.</p>
+    <form id="authForm" novalidate>
+      <label>Ваше имя
+        <input id="authName" placeholder="Иван Иванов" maxlength="60" required>
+      </label>
+      <label>Email
+        <input id="authEmail" type="email" placeholder="ivan@example.com" maxlength="80" required>
+      </label>
+      <button type="submit" class="btn">Войти на сайт →</button>
+    </form>
+  </div>
+</div>
+
+<header>
+  <div class="header-in">
+    <div class="logo">🏆 Школьный <span>Спорт</span> РБ</div>
+    <nav>
+      <button data-tab="reg" class="active">Регистрация</button>
+      <button data-tab="teams">Команды</button>
+      <button data-tab="table">Таблица</button>
+      <button data-tab="tournaments">Турниры</button>
+      <button data-tab="matches">Матчи</button>
+      <button data-tab="stats">Статистика</button>
+      <button data-tab="moderation" class="admin" id="navModeration" style="display:none">🛡 Модерация</button>
+    </nav>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span id="adminBadge" class="admin-badge" style="display:none">ADMIN</span>
+      <button class="profile-btn" id="profileBtn" title="Профиль"><span id="avatarInitials">?</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- РЕГИСТРАЦИЯ -->
+<section id="tab-reg" class="tab active">
+  <h1>Регистрация школьной команды</h1>
+  <p class="sub" id="regSubtitle">Заявка будет отправлена на проверку администратору.</p>
+  <form id="regForm" class="panel" novalidate>
+    <div class="grid2">
+      <label>Город<select id="citySelect" required></select></label>
+      <label>Школа / гимназия / лицей<select id="schoolSelect" required disabled></select></label>
+    </div>
+
+    <label style="margin-bottom:8px">Вид спорта</label>
+    <div class="sports">
+      <label class="sport-card"><input type="radio" name="sport" value="football" required><span>⚽ Футбол</span></label>
+      <label class="sport-card"><input type="radio" name="sport" value="basketball"><span>🏀 Баскетбол</span></label>
+      <label class="sport-card"><input type="radio" name="sport" value="volleyball"><span>🏐 Волейбол</span></label>
+      <label class="sport-card"><input type="radio" name="sport" value="tennis"><span>🎾 Теннис</span></label>
+    </div>
+
+    <div class="grid2">
+      <label>Название команды<input id="teamName" placeholder="Например: «Молния»" maxlength="40" required></label>
+      <label>Капитан команды<input id="captain" placeholder="Фамилия Имя" maxlength="60" required></label>
+    </div>
+
+    <label>Контакт (телефон или e-mail)<input id="contact" placeholder="+375 29 123-45-67" maxlength="60" required></label>
+
+    <label style="margin-bottom:8px">Состав команды</label>
+    <div id="playersList"></div>
+    <button type="button" class="btn ghost sm" id="addPlayer" style="margin-bottom:18px">+ Добавить игрока</button>
+
+    <label style="display:flex;align-items:center;gap:10px;color:var(--text);font-weight:500">
+      <input type="checkbox" id="agree" style="width:18px;height:18px;margin:0;accent-color:var(--accent)">
+      Подтверждаю, что команда представляет указанную школу
+    </label>
+
+    <button type="submit" class="btn" id="regSubmitBtn">Отправить заявку</button>
+  </form>
+</section>
+
+<!-- КОМАНДЫ -->
+<section id="tab-teams" class="tab">
+  <h1>Команды</h1>
+  <p class="sub">Одобренные школьные команды по городам и районам.</p>
+  <div class="filters">
+    <select id="fCity"></select>
+    <select id="fSport">
+      <option value="">Все виды спорта</option>
+      <option value="football">⚽ Футбол</option>
+      <option value="basketball">🏀 Баскетбол</option>
+      <option value="volleyball">🏐 Волейбол</option>
+      <option value="tennis">🎾 Теннис</option>
+    </select>
+    <input id="fSearch" placeholder="🔍 Поиск по названию, школе, капитану…">
+  </div>
+  <div class="cards" id="teamsList"></div>
+</section>
+
+<!-- ТАБЛИЦА -->
+<section id="tab-table" class="tab">
+  <h1>Турнирные таблицы</h1>
+  <p class="sub">Сводные таблицы по городам и районам. Победа — 3, ничья — 1.</p>
+  <div class="filters" style="grid-template-columns:1fr 1fr">
+    <select id="tSport">
+      <option value="football">⚽ Футбол</option>
+      <option value="basketball">🏀 Баскетбол</option>
+      <option value="volleyball">🏐 Волейбол</option>
+      <option value="tennis">🎾 Теннис</option>
+    </select>
+    <select id="tCity"></select>
+  </div>
+  <div id="tablesContainer"></div>
+</section>
+
+<!-- ТУРНИРЫ -->
+<section id="tab-tournaments" class="tab">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:12px">
+    <h1>Турниры</h1>
+    <button class="btn" onclick="openCreateTournament()">+ Создать турнир</button>
+  </div>
+  <p class="sub" id="tournSubtitle">Заявка на турнир будет проверена администратором.</p>
+  <div class="filters" style="grid-template-columns:1fr">
+    <select id="tournCityFilter"><option value="">Все города</option></select>
+  </div>
+  <div class="tournament-list" id="tournamentsList"></div>
+</section>
+
+<!-- МАТЧИ -->
+<section id="tab-matches" class="tab">
+  <h1>Товарищеские матчи</h1>
+  <p class="sub">Разовые встречи между одобренными командами.</p>
+  <div class="filters" style="grid-template-columns:1fr">
+    <select id="mSport">
+      <option value="">Все виды спорта</option>
+      <option value="football">⚽ Футбол</option>
+      <option value="basketball">🏀 Баскетбол</option>
+      <option value="volleyball">🏐 Волейбол</option>
+      <option value="tennis">🎾 Теннис</option>
+    </select>
+  </div>
+  <div id="matchesList"></div>
+</section>
+
+<!-- СТАТИСТИКА -->
+<section id="tab-stats" class="tab">
+  <h1>Статистика</h1>
+  <p class="sub">Общие показатели и разбивка по городам и районам.</p>
+  <div class="stat-grid" id="statCards"></div>
+
+  <div class="panel">
+    <h2>🏙 По городам</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Город</th><th>Команд</th><th>Игроков</th><th>Матчей</th></tr></thead>
+        <tbody id="cityStatsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>🏘 По районам</h2>
+    <div id="districtStats"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Команды по видам спорта</h2>
+    <div id="sportBars"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Топ городов по числу команд</h2>
+    <div id="cityBars"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Данные</h2>
+    <p class="sub" style="margin-bottom:14px">Всё хранится локально в браузере.</p>
+    <button class="btn ghost sm" id="exportBtn">⬇️ Экспорт JSON</button>
+    <button class="btn danger sm" id="resetBtn" style="display:none">🗑 Сбросить всё</button>
+  </div>
+</section>
+
+<!-- МОДЕРАЦИЯ (только админ) -->
+<section id="tab-moderation" class="tab">
+  <div id="moderationContent"></div>
+</section>
+
+</main>
+
+<!-- МОДАЛКА ВЫЗОВА -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h3>⚔️ Бросить вызов</h3>
+    <p class="sub" id="modalOpponent" style="margin-bottom:18px"></p>
+    <label>Ваша команда<select id="challengerSelect"></select></label>
+    <label>Дата матча<input type="date" id="matchDate"></label>
+    <div class="modal-actions">
+      <button class="btn ghost sm" onclick="closeModal()">Отмена</button>
+      <button class="btn sm" onclick="confirmChallenge()">Отправить вызов</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА СОЗДАНИЯ ТУРНИРА -->
+<div class="modal" id="createTournModal">
+  <div class="modal-box large">
+    <h3>Создать турнир</h3>
+    <p class="sub" style="margin-bottom:16px" id="createTournSub">После создания заявка уйдёт на модерацию.</p>
+    <label>Название турнира<input id="tName" placeholder="Кубок города по футболу" maxlength="60"></label>
+    <div class="grid2">
+      <label>Вид спорта
+        <select id="tCreateSport">
+          <option value="football">⚽ Футбол</option>
+          <option value="basketball">🏀 Баскетбол</option>
+          <option value="volleyball">🏐 Волейбол</option>
+          <option value="tennis">🎾 Теннис</option>
+        </select>
+      </label>
+      <label>Город (фильтр команд)<select id="tCreateCity"><option value="">Все города</option></select></label>
+    </div>
+    <label style="margin-bottom:8px">Команды-участники (одобренные)</label>
+    <div id="tTeamCheckboxes" class="team-checkboxes"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeCreateTournament()">Отмена</button>
+      <button class="btn" onclick="doCreateTournament()">Создать турнир</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА ТУРНИРА -->
+<div class="modal" id="tournamentModal">
+  <div class="modal-box large">
+    <div id="tournamentBody"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeTournamentModal()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<!-- МОДАЛКА ПРОФИЛЯ -->
+<div class="modal" id="profileModal">
+  <div class="modal-box large">
+    <div id="profileBody"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="logout()">Выйти из аккаунта</button>
+      <button class="btn" onclick="closeProfile()">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+/* ==========================================================
+   АДМИН-КОД (обфусцирован base64, чтобы не искать в исходниках)
+   ========================================================== */
+const _s1 = 'YWRtaW';
+const _s2 = '4yMDI0';
+function _checkAdminCode(v) {
+  try { return v === atob(_s1 + _s2); } catch { return false; }
+}
+
+/* ==========================================================
+   СПРАВОЧНИКИ
+   ========================================================== */
+const CITIES = [
+  { name:'Минск',       schools:120 },
+  { name:'Гомель',      schools:65 },
+  { name:'Брест',       schools:55 },
+  { name:'Гродно',      schools:52 },
+  { name:'Витебск',     schools:60 },
+  { name:'Могилёв',     schools:50 },
+  { name:'Бобруйск',    schools:38 },
+  { name:'Барановичи',  schools:32 },
+  { name:'Борисов',     schools:28 },
+  { name:'Пинск',       schools:26 },
+  { name:'Орша',        schools:22 },
+  { name:'Мозырь',      schools:24 },
+  { name:'Солигорск',   schools:20 },
+  { name:'Новополоцк',  schools:18 },
+  { name:'Лида',        schools:20 },
+  { name:'Молодечно',   schools:22 }
+];
+
+const CITY_DISTRICTS = {
+  'Минск':      ['Центральный','Советский','Первомайский','Партизанский','Заводской','Ленинский','Октябрьский','Московский','Фрунзенский'],
+  'Гомель':     ['Центральный','Советский','Железнодорожный','Новобелицкий'],
+  'Брест':      ['Ленинский','Московский'],
+  'Гродно':     ['Ленинский','Октябрьский'],
+  'Витебск':    ['Железнодорожный','Октябрьский','Первомайский'],
+  'Могилёв':    ['Ленинский','Октябрьский'],
+  'Бобруйск':   ['Ленинский','Первомайский'],
+  'Барановичи': ['Городской'],
+  'Борисов':    ['Городской'],
+  'Пинск':      ['Городской'],
+  'Орша':       ['Городской'],
+  'Мозырь':     ['Городской'],
+  'Солигорск':  ['Городской'],
+  'Новополоцк': ['Городской'],
+  'Лида':       ['Городской'],
+  'Молодечно':  ['Городской']
+};
+
+/* Известные именные школы (добавляются к генерируемому списку) */
+const NAMED_SCHOOLS = {
+  'Минск': [
+    { name:'Лицей БГУ',                         district:'Центральный' },
+    { name:'Гимназия №1',                       district:'Центральный' },
+    { name:'Гимназия №2',                       district:'Октябрьский' },
+    { name:'Гимназия №29',                      district:'Фрунзенский' },
+    { name:'Гимназия №56',                      district:'Заводской' },
+    { name:'Гимназия-колледж искусств',         district:'Центральный' },
+    { name:'Лицей №1',                          district:'Ленинский' },
+    { name:'Лицей №2',                          district:'Октябрьский' },
+    { name:'СШ №51',                            district:'Октябрьский' },
+    { name:'СШ №32',                            district:'Ленинский' }
+  ],
+  'Гомель': [
+    { name:'Гимназия №1',                       district:'Центральный' },
+    { name:'Гимназия №10',                      district:'Советский' },
+    { name:'Лицей №1',                          district:'Центральный' },
+    { name:'СШ №66',                            district:'Советский' }
+  ],
+  'Брест': [
+    { name:'Гимназия №1',                       district:'Ленинский' },
+    { name:'Лицей №1',                          district:'Московский' },
+    { name:'СШ №20',                            district:'Ленинский' }
+  ],
+  'Гродно': [
+    { name:'Гимназия №1',                       district:'Ленинский' },
+    { name:'Лицей №1',                          district:'Октябрьский' },
+    { name:'СШ №32',                            district:'Ленинский' }
+  ],
+  'Витебск': [
+    { name:'Гимназия №1',                       district:'Октябрьский' },
+    { name:'Гимназия №2',                       district:'Железнодорожный' },
+    { name:'Лицей №1',                          district:'Первомайский' }
+  ],
+  'Могилёв': [
+    { name:'Гимназия №1',                       district:'Ленинский' },
+    { name:'Лицей №1',                          district:'Октябрьский' },
+    { name:'СШ №34',                            district:'Ленинский' }
+  ],
+  'Бобруйск': [
+    { name:'Гимназия №1',                       district:'Ленинский' },
+    { name:'Лицей №1',                          district:'Первомайский' }
+  ],
+  'Барановичи': [ { name:'Гимназия №1', district:'Городской' } ],
+  'Борисов':    [ { name:'Гимназия №1', district:'Городской' } ],
+  'Пинск':      [ { name:'Гимназия №1', district:'Городской' } ],
+  'Орша':       [ { name:'Гимназия №1', district:'Городской' } ],
+  'Мозырь':     [ { name:'Гимназия №1', district:'Городской' } ],
+  'Солигорск':  [ { name:'Гимназия №1', district:'Городской' } ],
+  'Новополоцк': [ { name:'Гимназия №1', district:'Городской' } ],
+  'Лида':       [ { name:'Гимназия №1', district:'Городской' } ],
+  'Молодечно':  [ { name:'Гимназия №1', district:'Городской' } ]
+};
+
+const SPORT = {
+  football:   { name:'Футбол',    icon:'⚽', cls:'s-football',   color:'#22c55e' },
+  basketball: { name:'Баскетбол', icon:'🏀', cls:'s-basketball', color:'#f97316' },
+  volleyball: { name:'Волейбол',  icon:'🏐', cls:'s-volleyball', color:'#3b82f6' },
+  tennis:     { name:'Теннис',    icon:'🎾', cls:'s-tennis',     color:'#eab308' }
+};
+
+/* ==========================================================
+   УТИЛИТЫ
+   ========================================================== */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const uid = p => p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtDate = d => d ? new Date(d).toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+const initials = name => (name || '?').trim().split(/\s+/).slice(0,2).map(w => w[0]).join('').toUpperCase() || '?';
+
+function toast(msg, type='ok') {
+  const el = document.createElement('div');
+  el.className = 'toast' + (type === 'err' ? ' err' : type === 'warn' ? ' warn' : '');
+  el.textContent = msg;
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+/* Генерация реалистичного списка школ города */
+const schoolCache = {};
+function getSchools(cityName) {
+  if (schoolCache[cityName]) return schoolCache[cityName];
+  const info = CITIES.find(x => x.name === cityName);
+  if (!info) return [];
+
+  const districts = CITY_DISTRICTS[cityName] || ['Городской'];
+  const total = info.schools;
+  const out = [];
+
+  for (let i = 1; i <= total; i++) {
+    const district = districts[(i - 1) % districts.length];
+    let name;
+    if (i % 17 === 0)      name = `Лицей №${i}`;
+    else if (i % 7 === 0)  name = `Гимназия №${i}`;
+    else if (i % 11 === 0) name = `СШ №${i} с углублённым изучением языков`;
+    else if (i % 13 === 0) name = `СШ №${i} с музыкальным уклоном`;
+    else                   name = `СШ №${i}`;
+    out.push({ name: `${name} г. ${cityName}`, district });
+  }
+
+  (NAMED_SCHOOLS[cityName] || []).forEach(s => {
+    const full = `${s.name} г. ${cityName}`;
+    if (!out.some(x => x.name === full)) {
+      out.push({ name: full, district: s.district });
+    }
+  });
+
+  return (schoolCache[cityName] = out);
+}
+
+/* ==========================================================
+   АВТОРИЗАЦИЯ
+   ========================================================== */
+const USERS_KEY   = 'sportbel_users_v3';
+const SESSION_KEY = 'sportbel_session_v3';
+let currentUser = null;
+
+const getUsers  = () => { try { return JSON.parse(localStorage.getItem(USERS_KEY)) || {}; } catch { return {}; } };
+const saveUsers = u => localStorage.setItem(USERS_KEY, JSON.stringify(u));
+const getSession = () => localStorage.getItem(SESSION_KEY);
+const setSession = id => localStorage.setItem(SESSION_KEY, id);
+const clearSession = () => localStorage.removeItem(SESSION_KEY);
+
+const isAdmin = () => currentUser?.role === 'admin';
+
+function initAuth() {
+  const sid = getSession();
+  if (sid) {
+    const users = getUsers();
+    if (users[sid]) {
+      currentUser = users[sid];
+      if (!currentUser.role) currentUser.role = 'user';
+    }
+  }
+}
+
+function showAuthScreen() { $('#authScreen').classList.add('open'); setTimeout(() => $('#authName')?.focus(), 100); }
+function hideAuthScreen() { $('#authScreen').classList.remove('open'); }
+
+function handleAuth(e) {
+  e.preventDefault();
+  const name = $('#authName').value.trim();
+  const email = $('#authEmail').value.trim().toLowerCase();
+
+  if (name.length < 2) return toast('Введите имя (минимум 2 символа)', 'err');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('Некорректный email', 'err');
+
+  const users = getUsers();
+  let user = Object.values(users).find(u => u.email === email);
+
+  if (user) {
+    user.name = name;
+    if (!user.role) user.role = 'user';
+  } else {
+    user = { id: uid('u'), name, email, role:'user', createdAt: Date.now() };
+    users[user.id] = user;
+  }
+  saveUsers(users);
+  setSession(user.id);
+  currentUser = user;
+
+  hideAuthScreen();
+  updateProfileBtn();
+  updateNav();
+  renderAll();
+  toast(`Добро пожаловать, ${name}! 👋`);
+}
+
+function logout() {
+  if (!confirm('Выйти из аккаунта?')) return;
+  clearSession();
+  currentUser = null;
+  closeProfile();
+  updateNav();
+  showAuthScreen();
+  toast('Вы вышли из аккаунта');
+}
+
+function updateProfileBtn() {
+  const el = $('#avatarInitials');
+  if (el) el.textContent = currentUser ? initials(currentUser.name) : '?';
+}
+
+function updateNav() {
+  const admin = isAdmin();
+  const modBtn = $('#navModeration');
+  const badge = $('#adminBadge');
+  const resetBtn = $('#resetBtn');
+  if (modBtn)   modBtn.style.display = admin ? '' : 'none';
+  if (badge)    badge.style.display = admin ? '' : 'none';
+  if (resetBtn) resetBtn.style.display = admin ? '' : 'none';
+
+  const regSub   = $('#regSubtitle');
+  const regBtn   = $('#regSubmitBtn');
+  const tournSub = $('#tournSubtitle');
+  const createSub= $('#createTournSub');
+  if (admin) {
+    regSub.textContent   = 'Как администратор вы создаёте команды сразу (без модерации).';
+    regBtn.textContent   = 'Создать команду';
+    tournSub.textContent = 'Как администратор вы создаёте турниры сразу (без модерации).';
+    createSub.textContent= 'Как администратор вы создаёте турнир сразу.';
+  } else {
+    regSub.textContent   = 'Заявка будет отправлена на проверку администратору.';
+    regBtn.textContent   = 'Отправить заявку';
+    tournSub.textContent = 'Заявка на турнир будет проверена администратором.';
+    createSub.textContent= 'После создания заявка уйдёт на модерацию.';
+  }
+}
+
+/* ==========================================================
+   ХРАНИЛИЩЕ
+   ========================================================== */
+const KEY = 'sportbel_v5';
+let state = { teams: [], matches: [], tournaments: [] };
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) state = JSON.parse(raw);
+  } catch (e) { state = { teams: [], matches: [], tournaments: [] }; }
+  if (!Array.isArray(state.teams))       state.teams = [];
+  if (!Array.isArray(state.matches))     state.matches = [];
+  if (!Array.isArray(state.tournaments)) state.tournaments = [];
+  state.teams.forEach(t => { if (!t.status) t.status = 'approved'; });
+  state.tournaments.forEach(t => { if (!t.status) t.status = 'approved'; });
+}
+
+/* ==========================================================
+   СТАТИСТИКА
+   ========================================================== */
+const approvedTeams = () => state.teams.filter(t => t.status === 'approved');
+
+function statsFor(teamId) {
+  let w = 0, d = 0, l = 0, gf = 0, ga = 0;
+  state.matches.forEach(m => {
+    if (m.status !== 'played') return;
+    if (m.teamA !== teamId && m.teamB !== teamId) return;
+    const isA = m.teamA === teamId;
+    const my = isA ? m.scoreA : m.scoreB;
+    const opp = isA ? m.scoreB : m.scoreA;
+    gf += my; ga += opp;
+    if (my > opp) w++; else if (my < opp) l++; else d++;
+  });
+  return { w, d, l, gf, ga, played: w + d + l, pts: w * 3 + d };
+}
+const teamById = id => state.teams.find(t => t.id === id);
+
+function statusBadge(s) {
+  if (s === 'pending')  return '<span class="badge s-pending">на модерации</span>';
+  if (s === 'approved') return '<span class="badge s-mine">одобрено</span>';
+  return '';
+}
+
+/* ==========================================================
+   ПРОФИЛЬ + СКРЫТЫЙ АДМИН-ТРИГГЕР
+   ========================================================== */
+let _avatarClicks = 0;
+let _avatarTimer  = null;
+
+function handleAvatarClick() {
+  if (isAdmin()) return;               /* уже админ — триггер не нужен */
+  _avatarClicks++;
+  clearTimeout(_avatarTimer);
+  _avatarTimer = setTimeout(() => { _avatarClicks = 0; }, 2000);
+  if (_avatarClicks >= 5) {
+    _avatarClicks = 0;
+    const el = $('#adminUnlock');
+    if (el) el.classList.add('show');
+  }
+}
+
+function tryUnlockAdmin() {
+  const val = $('#adminCodeInput').value.trim();
+  if (!val) return;
+  if (!_checkAdminCode(val)) {
+    toast('Неверный код', 'err');
+    $('#adminCodeInput').value = '';
+    return;
+  }
+  currentUser.role = 'admin';
+  const users = getUsers();
+  if (users[currentUser.id]) users[currentUser.id].role = 'admin';
+  saveUsers(users);
+  updateNav();
+  renderAll();
+  toast('👑 Режим администратора активирован', 'warn');
+  openProfile();       /* перерисовать профиль с бейджем ADMIN */
+}
+
+function openProfile() {
+  if (!currentUser) return;
+  const admin = isAdmin();
+  const myTeams  = state.teams.filter(t => t.ownerId === currentUser.id);
+  const myTourns = state.tournaments.filter(t => t.ownerId === currentUser.id);
+  const myPlayers= myTeams.reduce((s,t) => s + t.players.length, 0);
+  const regDate  = fmtDate(currentUser.createdAt);
+
+  const pendingTeams  = admin ? state.teams.filter(t => t.status === 'pending') : [];
+  const pendingTourns = admin ? state.tournaments.filter(t => t.status === 'pending') : [];
+
+  let teamsHtml = myTeams.length
+    ? '<ul class="profile-list">' + myTeams.map(t => {
+        const sp = SPORT[t.sport];
+        return `<li>
+          <span><b>${esc(t.name)}</b> · ${sp.icon} ${sp.name} · ${esc(t.city)}</span>
+          <span style="display:flex;gap:6px;align-items:center">
+            ${statusBadge(t.status)}
+            ${t.status === 'pending' ? `<button class="btn danger sm" onclick="removeMyTeam('${t.id}')">✕</button>` : ''}
+          </span>
+        </li>`;
+      }).join('') + '</ul>'
+    : '<p class="meta">Вы ещё не зарегистрировали ни одной команды.</p>';
+
+  let tournsHtml = myTourns.length
+    ? '<ul class="profile-list">' + myTourns.map(tr => {
+        const sp = SPORT[tr.sport];
+        return `<li>
+          <span><b>${esc(tr.name)}</b> · ${sp.icon} ${sp.name}</span>
+          <span style="display:flex;gap:6px;align-items:center">
+            ${statusBadge(tr.status === 'pending' ? 'pending' : 'approved')}
+            ${tr.status === 'pending' ? `<button class="btn danger sm" onclick="removeMyTournament('${tr.id}')">✕</button>` : ''}
+          </span>
+        </li>`;
+      }).join('') + '</ul>'
+    : '<p class="meta">Вы ещё не создали ни одного турнира.</p>';
+
+  let modHtml = '';
+  if (admin && (pendingTeams.length || pendingTourns.length)) {
+    modHtml = `<div class="mod-stat">
+      <b>${pendingTeams.length + pendingTourns.length}</b>
+      <span>заявок ждут модерации · <a href="#" onclick="closeProfile();switchTab('moderation');return false;" style="color:var(--warn);text-decoration:underline">перейти</a></span>
+    </div>`;
+  }
+
+  $('#profileBody').innerHTML = `
+    <div class="profile-head">
+      <div class="avatar big ${admin?'admin':''}" onclick="handleAvatarClick()">${initials(currentUser.name)}</div>
+      <div>
+        <div class="profile-name">${esc(currentUser.name)} ${admin ? '<span class="badge" style="background:var(--warn);color:#1a1a1a;font-size:10px">ADMIN</span>' : ''}</div>
+        <div class="meta">📧 ${esc(currentUser.email)}</div>
+        <div class="meta">📅 С нами с ${regDate}</div>
+      </div>
+    </div>
+
+    ${modHtml}
+
+    <div class="stat-grid" style="margin-bottom:22px">
+      <div class="stat"><b>${myTeams.length}</b><span>Моих команд</span></div>
+      <div class="stat"><b>${myPlayers}</b><span>Игроков</span></div>
+      <div class="stat"><b>${myTourns.length}</b><span>Моих турниров</span></div>
+    </div>
+
+    <h3 style="margin-bottom:10px;font-size:16px">🛡 Мои команды</h3>
+    ${teamsHtml}
+
+    <h3 style="margin:22px 0 10px;font-size:16px">🏆 Мои турниры</h3>
+    ${tournsHtml}
+
+    <div id="adminUnlock">
+      <label style="margin-bottom:8px">Секретный код</label>
+      <div style="display:flex;gap:8px">
+        <input id="adminCodeInput" type="password" placeholder="••••••••" style="flex:1;padding:11px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-size:14px;font-family:inherit;outline:none">
+        <button class="btn warn sm" onclick="tryUnlockAdmin()">Активировать</button>
+      </div>
+    </div>
+  `;
+  $('#profileModal').classList.add('open');
+}
+function closeProfile() { $('#profileModal').classList.remove('open'); }
+
+/* ==========================================================
+   РЕНДЕР: КОМАНДЫ
+   ========================================================== */
+function renderTeams() {
+  const city  = $('#fCity').value;
+  const sport = $('#fSport').value;
+  const q     = $('#fSearch').value.trim().toLowerCase();
+
+  const list = approvedTeams().filter(t =>
+    (!city  || t.city === city) &&
+    (!sport || t.sport === sport) &&
+    (!q || t.name.toLowerCase().includes(q) || t.school.toLowerCase().includes(q) || t.captain.toLowerCase().includes(q))
+  );
+
+  const box = $('#teamsList');
+  if (!list.length) {
+    box.innerHTML = '<div class="empty">Одобренных команд пока нет. Отправьте заявку во вкладке «Регистрация» 👆</div>';
+    return;
+  }
+
+  box.innerHTML = list.map(t => {
+    const s = statsFor(t.id);
+    const sp = SPORT[t.sport];
+    const isMine = currentUser && t.ownerId === currentUser.id;
+    return `
+      <article class="card">
+        <div class="team-top">
+          <h3>${esc(t.name)}</h3>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+            ${isMine ? '<span class="badge s-mine">моя</span>' : ''}
+            <span class="badge ${sp.cls}">${sp.icon} ${sp.name}</span>
+          </div>
+        </div>
+        <div class="meta">🏫 ${esc(t.school)}</div>
+        <div class="meta">📍 ${esc(t.city)}${t.district ? ' · ' + esc(t.district) + ' р-н' : ''}</div>
+        <div class="meta">👤 ${esc(t.captain)} · ${t.players.length} игр.</div>
+        <div class="score-row">
+          <div><b>${s.pts}</b><span>очки</span></div>
+          <div><b>${s.w}-${s.d}-${s.l}</b><span>В-Н-П</span></div>
+          <div><b>${s.gf}:${s.ga}</b><span>счёт</span></div>
+        </div>
+        <div class="card-actions">
+          <button class="btn sm" onclick="openChallenge('${t.id}')">⚔️ Вызвать</button>
+          <button class="btn sm ghost" onclick="togglePlayers('${t.id}')">👥 Состав</button>
+          ${(isMine || isAdmin()) ? `<button class="btn danger sm" onclick="removeTeam('${t.id}')">🗑</button>` : ''}
+        </div>
+        <div class="players" id="pl-${t.id}" hidden>
+          ${t.players.length ? t.players.map(p => `<span class="chip">${esc(p.name)}${p.num ? ' #'+esc(p.num) : ''}</span>`).join('') : '<span class="meta">Состав не указан</span>'}
+        </div>
+      </article>`;
+  }).join('');
+}
+function togglePlayers(id) { const el = $('#pl-' + id); if (el) el.hidden = !el.hidden; }
+
+function removeTeam(id) {
+  const t = teamById(id); if (!t) return;
+  if (!isAdmin() && t.ownerId !== currentUser?.id) return toast('Это не ваша команда', 'err');
+  if (!confirm(`Удалить команду «${t.name}» и все её матчи?`)) return;
+  state.teams = state.teams.filter(x => x.id !== id);
+  state.matches = state.matches.filter(m => m.teamA !== id && m.teamB !== id);
+  state.tournaments.forEach(tr => {
+    tr.teams = tr.teams.filter(x => x !== id);
+    tr.groups = tr.groups.map(g => g.filter(x => x !== id)).filter(g => g.length);
+    tr.groupMatches = tr.groupMatches.filter(m => m.teamA !== id && m.teamB !== id);
+  });
+  state.tournaments = state.tournaments.filter(tr => tr.teams.length >= 2);
+  save(); renderAll(); toast('Команда удалена');
+}
+const removeMyTeam = removeTeam;
+
+/* ==========================================================
+   РЕНДЕР: ТАБЛИЦА
+   ========================================================== */
+function renderTable() {
+  const sport = $('#tSport').value;
+  const cityFilter = $('#tCity').value;
+  const container = $('#tablesContainer');
+  const cities = [...new Set(approvedTeams().filter(t => t.sport === sport).map(t => t.city))].sort();
+
+  if (!cities.length) {
+    container.innerHTML = '<div class="empty">В этом виде спорта пока нет одобренных команд.</div>';
+    return;
+  }
+  const filtered = cityFilter ? cities.filter(c => c === cityFilter) : cities;
+  if (!filtered.length) {
+    container.innerHTML = '<div class="empty">Нет команд в выбранном городе</div>';
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(city => {
+    const cityTeams = approvedTeams().filter(t => t.sport === sport && t.city === city);
+    const districts = [...new Set(cityTeams.map(t => t.district || 'Не указан'))].sort();
+    html += `<div class="city-section"><h2>📍 ${esc(city)}</h2>`;
+    districts.forEach(district => {
+      const dTeams = cityTeams.filter(t => (t.district || 'Не указан') === district);
+      const rows = dTeams.map(t => ({ t, s: statsFor(t.id) }))
+        .sort((a,b) => b.s.pts - a.s.pts || (b.s.gf-b.s.ga) - (a.s.gf-a.s.ga) || b.s.w - a.s.w);
+
+      html += `<div class="district-block">
+        <h3>${esc(district)} район</h3>
+        <div class="table-wrap"><table>
+          <thead><tr>
+            <th>#</th><th>Команда</th><th>Школа</th>
+            <th>И</th><th>В</th><th>Н</th><th>П</th><th>Забито</th><th>Пропущено</th><th>Очки</th>
+          </tr></thead><tbody>`;
+      rows.forEach(({t,s}, i) => {
+        html += `<tr>
+          <td class="rank ${i<3?'top':''}">${i+1}</td>
+          <td><b>${esc(t.name)}</b></td>
+          <td style="color:var(--muted);font-size:13px">${esc(t.school)}</td>
+          <td>${s.played}</td><td>${s.w}</td><td>${s.d}</td><td>${s.l}</td>
+          <td>${s.gf}</td><td>${s.ga}</td><td class="pts">${s.pts}</td>
+        </tr>`;
+      });
+      html += `</tbody></table></div></div>`;
+    });
+    html += `</div>`;
+  });
+  container.innerHTML = html;
+}
+
+/* ==========================================================
+   ТУРНИРЫ
+   ========================================================== */
+function bracketSeed(n) {
+  let seeds = [1, 2];
+  while (seeds.length < n) {
+    const sum = seeds.length * 2 + 1;
+    const next = [];
+    for (const s of seeds) { next.push(s); next.push(sum - s); }
+    seeds = next;
+  }
+  return seeds;
+}
+function autoGroups(count) {
+  if (count <= 4)  return 1;
+  if (count <= 8)  return 2;
+  if (count <= 16) return 4;
+  return 8;
+}
+function getGroupStandings(tr, gIdx) {
+  const ids = tr.groups[gIdx];
+  const stats = ids.map(id => ({ teamId:id, w:0, d:0, l:0, gf:0, ga:0, pts:0 }));
+  tr.groupMatches.filter(m => m.group === gIdx && m.status === 'played').forEach(m => {
+    const a = stats.find(s => s.teamId === m.teamA);
+    const b = stats.find(s => s.teamId === m.teamB);
+    if (!a || !b) return;
+    a.gf += m.scoreA; a.ga += m.scoreB;
+    b.gf += m.scoreB; b.ga += m.scoreA;
+    if (m.scoreA > m.scoreB) { a.w++; a.pts += 3; b.l++; }
+    else if (m.scoreA < m.scoreB) { b.w++; b.pts += 3; a.l++; }
+    else { a.d++; a.pts++; b.d++; b.pts++; }
+  });
+  return stats.sort((x,y) => y.pts - x.pts || (y.gf-y.ga) - (x.gf-x.ga) || y.gf - x.gf);
+}
+function allGroupPlayed(tr) {
+  return tr.groupMatches.length > 0 && tr.groupMatches.every(m => m.status === 'played');
+}
+function generatePlayoff(tr) {
+  const numGroups = tr.groups.length;
+  const qualifiers = [];
+  for (let pos = 0; pos < 2; pos++) {
+    for (let g = 0; g < numGroups; g++) {
+      const st = getGroupStandings(tr, g);
+      if (st[pos]) qualifiers.push(st[pos].teamId);
+    }
+  }
+  const advancing = numGroups === 1 ? qualifiers.slice(0, 2) : qualifiers;
+  const seeds = bracketSeed(advancing.length);
+  const order = seeds.map(s => advancing[s - 1]);
+  const roundNames = { 2:'Финал', 4:'Полуфинал', 8:'1/4 финала', 16:'1/8 финала' };
+  const rounds = [];
+  let current = order;
+  while (current.length >= 2) {
+    const name = roundNames[current.length] || `Раунд ${rounds.length + 1}`;
+    const matches = [];
+    for (let i = 0; i < current.length; i += 2)
+      matches.push({ id: uid('pm'), teamA: current[i], teamB: current[i+1], scoreA: null, scoreB: null, status: 'pending', winner: null });
+    rounds.push({ name, matches });
+    current = new Array(current.length / 2).fill(null);
+  }
+  tr.playoff = { rounds };
+  tr.playoffStatus = 'playoff';
+  save();
+}
+function statusText(s) { return { group:'Групповой этап', playoff:'Плей-офф', finished:'Завершён' }[s] || s; }
+
+function openCreateTournament() {
+  $('#tName').value = '';
+  $('#tCreateSport').value = 'football';
+  $('#tCreateCity').value = '';
+  updateTournamentTeamList();
+  $('#createTournModal').classList.add('open');
+}
+function closeCreateTournament() { $('#createTournModal').classList.remove('open'); }
+function updateTournamentTeamList() {
+  const sport = $('#tCreateSport').value;
+  const city = $('#tCreateCity').value;
+  const teams = approvedTeams().filter(t => t.sport === sport && (!city || t.city === city));
+  const box = $('#tTeamCheckboxes');
+  if (!teams.length) { box.innerHTML = '<p class="meta">Нет одобренных команд для этого вида спорта/города</p>'; return; }
+  box.innerHTML = teams.map(t =>
+    `<label><input type="checkbox" value="${t.id}">
+      <span>${esc(t.name)} — ${esc(t.school)} (${esc(t.city)})</span>
+    </label>`
+  ).join('');
+}
+function doCreateTournament() {
+  const name = $('#tName').value.trim();
+  const sport = $('#tCreateSport').value;
+  const checked = [...$('#tTeamCheckboxes').querySelectorAll('input:checked')].map(i => i.value);
+
+  if (!name) return toast('Введите название', 'err');
+  if (checked.length < 2) return toast('Выберите минимум 2 команды', 'err');
+  if (checked.length > 32) return toast('Максимум 32 команды', 'err');
+
+  const numGroups = autoGroups(checked.length);
+  const groups = Array.from({ length: numGroups }, () => []);
+  checked.forEach((id, i) => groups[i % numGroups].push(id));
+
+  const groupMatches = [];
+  groups.forEach((gt, gIdx) => {
+    for (let i = 0; i < gt.length; i++)
+      for (let j = i + 1; j < gt.length; j++)
+        groupMatches.push({ id: uid('gm'), group: gIdx, teamA: gt[i], teamB: gt[j], scoreA: null, scoreB: null, status: 'pending' });
+  });
+
+  const admin = isAdmin();
+  state.tournaments.push({
+    id: uid('tr'), name, sport, createdAt: Date.now(),
+    ownerId: currentUser?.id,
+    status: admin ? 'approved' : 'pending',
+    teams: checked, groups, groupMatches,
+    playoff: null, playoffStatus: 'group', champion: null
+  });
+
+  save(); renderTournaments(); closeCreateTournament();
+  if (admin) toast(`Турнир «${name}» создан`);
+  else toast(`Заявка на турнир «${name}» отправлена на модерацию`, 'warn');
+}
+
+function renderTournaments() {
+  const city = $('#tournCityFilter').value;
+  const list = state.tournaments
+    .filter(tr => tr.status === 'approved')
+    .filter(tr => !city || tr.teams.some(id => teamById(id)?.city === city))
+    .sort((a,b) => b.createdAt - a.createdAt);
+
+  const box = $('#tournamentsList');
+  if (!list.length) { box.innerHTML = '<div class="empty">Одобренных турниров пока нет. Создайте первый 👆</div>'; return; }
+
+  box.innerHTML = list.map(tr => {
+    const sp = SPORT[tr.sport];
+    const isMine = currentUser && tr.ownerId === currentUser.id;
+    return `<div class="tournament-card" onclick="openTournament('${tr.id}')">
+      <div class="team-top">
+        <h3>${esc(tr.name)}</h3>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+          ${isMine ? '<span class="badge s-mine">моя</span>' : ''}
+          <span class="badge ${sp.cls}">${sp.icon} ${sp.name}</span>
+        </div>
+      </div>
+      <div class="meta">👥 ${tr.teams.length} команд · ${tr.groups.length} групп</div>
+      <div class="meta">📊 Этап: <b style="color:#7ff0a4">${statusText(tr.playoffStatus || 'group')}</b></div>
+      ${tr.champion ? `<div class="meta">🏆 Чемпион: <b>${esc(teamById(tr.champion)?.name || '?')}</b></div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function openTournament(id) {
+  const tr = state.tournaments.find(x => x.id === id);
+  if (!tr) return;
+  if (tr.status !== 'approved' && !isAdmin()) return toast('Турнир ещё не одобрен', 'err');
+  renderTournamentDetail(tr);
+}
+function closeTournamentModal() { $('#tournamentModal').classList.remove('open'); }
+
+function renderTournamentDetail(tr) {
+  const sp = SPORT[tr.sport];
+  const isMine = currentUser && tr.ownerId === currentUser.id;
+  const stage = tr.playoffStatus || 'group';
+
+  let html = `<h2 style="margin-bottom:8px">${esc(tr.name)}</h2>
+    <div class="meta" style="margin-bottom:18px">
+      <span class="badge ${sp.cls}">${sp.icon} ${sp.name}</span>
+      &nbsp;·&nbsp; ${tr.teams.length} команд &nbsp;·&nbsp; Этап: <b style="color:#7ff0a4">${statusText(stage)}</b>
+    </div>`;
+
+  html += `<h3 style="margin-bottom:12px">📋 Групповой этап</h3><div class="groups-grid">`;
+  tr.groups.forEach((gTeams, gIdx) => {
+    const standings = getGroupStandings(tr, gIdx);
+    const matches = tr.groupMatches.filter(m => m.group === gIdx);
+    const locked = stage !== 'group';
+    html += `<div class="group-block">
+      <h4>Группа ${String.fromCharCode(65 + gIdx)}</h4>
+      <table>
+        <thead><tr><th>#</th><th>Команда</th><th>В</th><th>Н</th><th>П</th><th>О</th></tr></thead><tbody>`;
+    standings.forEach((s, i) => {
+      const t = teamById(s.teamId);
+      html += `<tr>
+        <td class="rank ${i<2?'top':''}">${i+1}</td>
+        <td>${esc(t?.name || '?')}</td>
+        <td>${s.w}</td><td>${s.d}</td><td>${s.l}</td>
+        <td class="pts">${s.pts}</td>
+      </tr>`;
+    });
+    html += `</tbody></table><div style="margin-top:12px">`;
+    matches.forEach(m => {
+      const a = teamById(m.teamA), b = teamById(m.teamB);
+      if (m.status === 'played' || locked) {
+        html += `<div class="mini-match">
+          <span>${esc(a?.name || '?')}</span>
+          <span class="score">${m.scoreA ?? '—'} : ${m.scoreB ?? '—'}</span>
+          <span>${esc(b?.name || '?')}</span>
+        </div>`;
+      } else {
+        html += `<div class="mini-match">
+          <span>${esc(a?.name || '?')}</span>
+          <input type="number" min="0" id="ga-${m.id}" class="tiny" placeholder="0">
+          <span>:</span>
+          <input type="number" min="0" id="gb-${m.id}" class="tiny" placeholder="0">
+          <span>${esc(b?.name || '?')}</span>
+          <button onclick="saveTournamentScore('${tr.id}','${m.id}')">✓</button>
+        </div>`;
+      }
+    });
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+
+  if (stage === 'group' && allGroupPlayed(tr)) {
+    html += `<button class="btn" style="margin-bottom:20px" onclick="startPlayoff('${tr.id}')">🏁 Сформировать плей-офф</button>`;
+  }
+
+  if (tr.playoff) {
+    html += `<h3 style="margin-bottom:12px">🏆 Плей-офф</h3><div class="bracket">`;
+    tr.playoff.rounds.forEach(round => {
+      html += `<div class="round-block"><h4>${round.name}</h4>`;
+      round.matches.forEach(m => {
+        const a = m.teamA ? teamById(m.teamA) : null;
+        const b = m.teamB ? teamById(m.teamB) : null;
+        const aName = a ? esc(a.name) : '?';
+        const bName = b ? esc(b.name) : '?';
+        if (m.status === 'played') {
+          html += `<div class="bracket-match played">
+            <span class="${m.winner===m.teamA?'winner':''}">${aName}</span>
+            <span class="score">${m.scoreA} : ${m.scoreB}</span>
+            <span class="${m.winner===m.teamB?'winner':''}">${bName}</span>
+          </div>`;
+        } else if (a && b) {
+          html += `<div class="bracket-match">
+            <span>${aName}</span>
+            <input type="number" min="0" id="pa-${m.id}" class="tiny" placeholder="0">
+            <span>:</span>
+            <input type="number" min="0" id="pb-${m.id}" class="tiny" placeholder="0">
+            <span>${bName}</span>
+            <button onclick="saveTournamentScore('${tr.id}','${m.id}')">✓</button>
+          </div>`;
+        } else {
+          html += `<div class="bracket-match pending">
+            <span>${aName}</span><span class="vs">vs</span><span>${bName}</span>
+          </div>`;
+        }
+      });
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (tr.champion) {
+    const c = teamById(tr.champion);
+    html += `<div class="champion-banner">🏆 Чемпион: ${esc(c?.name || '?')} — ${esc(c?.school || '')}</div>`;
+  }
+
+  if (isMine || isAdmin()) {
+    html += `<div style="margin-top:22px"><button class="btn danger" onclick="deleteTournament('${tr.id}')">Удалить турнир</button></div>`;
+  }
+
+  $('#tournamentBody').innerHTML = html;
+  $('#tournamentModal').classList.add('open');
+}
+
+function saveTournamentScore(trId, mid) {
+  const tr = state.tournaments.find(x => x.id === trId);
+  if (!tr) return;
+  let a, b;
+  const ga = document.getElementById('ga-' + mid);
+  if (ga) { a = ga.value; b = document.getElementById('gb-' + mid).value; }
+  else {
+    const pa = document.getElementById('pa-' + mid);
+    if (!pa) return;
+    a = pa.value; b = document.getElementById('pb-' + mid).value;
+  }
+  a = parseInt(a, 10); b = parseInt(b, 10);
+  if (isNaN(a) || isNaN(b) || a < 0 || b < 0) return toast('Некорректный счёт', 'err');
+
+  const gm = tr.groupMatches.find(m => m.id === mid);
+  if (gm) {
+    if ((tr.playoffStatus || 'group') !== 'group') return toast('Групповой этап завершён', 'err');
+    gm.scoreA = a; gm.scoreB = b; gm.status = 'played';
+    save(); renderTournamentDetail(tr); renderTournaments(); return;
+  }
+
+  if (tr.playoff) {
+    for (let r = 0; r < tr.playoff.rounds.length; r++) {
+      const round = tr.playoff.rounds[r];
+      const pm = round.matches.find(m => m.id === mid);
+      if (pm) {
+        if (a === b) return toast('В плей-офф не может быть ничьей', 'err');
+        pm.scoreA = a; pm.scoreB = b; pm.status = 'played';
+        const winner = a > b ? pm.teamA : pm.teamB;
+        pm.winner = winner;
+        const nextRound = tr.playoff.rounds[r + 1];
+        const mi = round.matches.indexOf(pm);
+        if (nextRound) {
+          const next = nextRound.matches[Math.floor(mi / 2)];
+          if (mi % 2 === 0) next.teamA = winner; else next.teamB = winner;
+        } else {
+          tr.champion = winner;
+          tr.playoffStatus = 'finished';
+        }
+        save(); renderTournamentDetail(tr); renderTournaments(); renderStats(); return;
+      }
+    }
+  }
+}
+function startPlayoff(trId) {
+  const tr = state.tournaments.find(x => x.id === trId);
+  if (!tr) return;
+  if (!allGroupPlayed(tr)) return toast('Не все матчи группы сыграны', 'err');
+  generatePlayoff(tr);
+  renderTournamentDetail(tr);
+  renderTournaments();
+  toast('Плей-офф сформирован 🏁');
+}
+function deleteTournament(id) {
+  const tr = state.tournaments.find(x => x.id === id);
+  if (!tr) return;
+  if (!isAdmin() && tr.ownerId !== currentUser?.id) return toast('Это не ваш турнир', 'err');
+  if (!confirm('Удалить турнир?')) return;
+  state.tournaments = state.tournaments.filter(x => x.id !== id);
+  save(); renderTournaments(); closeTournamentModal();
+  toast('Турнир удалён');
+}
+const removeMyTournament = deleteTournament;
+
+/* ==========================================================
+   МОДЕРАЦИЯ
+   ========================================================== */
+function renderModeration() {
+  if (!isAdmin()) { $('#moderationContent').innerHTML = '<div class="empty">Только для администратора</div>'; return; }
+
+  const pendingTeams  = state.teams.filter(t => t.status === 'pending');
+  const pendingTourns = state.tournaments.filter(t => t.status === 'pending');
+
+  let html = '<h1>🛡 Модерация заявок</h1>';
+  html += `<p class="sub">Всего на модерации: <b>${pendingTeams.length + pendingTourns.length}</b>.</p>`;
+
+  html += `<div class="panel"><h2>🛡 Команды на модерации (${pendingTeams.length})</h2>`;
+  if (!pendingTeams.length) html += '<p class="meta">Заявок на команды нет.</p>';
+  else {
+    html += '<div class="cards">';
+    pendingTeams.forEach(t => {
+      const sp = SPORT[t.sport];
+      const owner = (getUsers()[t.ownerId] || {}).name || 'неизвестно';
+      html += `<div class="card">
+        <div class="team-top">
+          <h3>${esc(t.name)}</h3>
+          <span class="badge ${sp.cls}">${sp.icon} ${sp.name}</span>
+        </div>
+        <div class="meta">🏫 ${esc(t.school)}</div>
+        <div class="meta">📍 ${esc(t.city)}${t.district ? ' · ' + esc(t.district) + ' р-н' : ''}</div>
+        <div class="meta">👤 ${esc(t.captain)} · ${t.players.length} игр.</div>
+        <div class="meta">📨 Заявка от: <b>${esc(owner)}</b></div>
+        <div class="players">
+          ${t.players.map(p => `<span class="chip">${esc(p.name)}${p.num ? ' #'+esc(p.num) : ''}</span>`).join('')}
+        </div>
+        <div class="card-actions" style="margin-top:14px">
+          <button class="btn sm" onclick="moderateTeam('${t.id}','approve')">✓ Одобрить</button>
+          <button class="btn danger sm" onclick="moderateTeam('${t.id}','reject')">✕ Отклонить</button>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  html += `<div class="panel"><h2>🏆 Турниры на модерации (${pendingTourns.length})</h2>`;
+  if (!pendingTourns.length) html += '<p class="meta">Заявок на турниры нет.</p>';
+  else {
+    html += '<div class="cards">';
+    pendingTourns.forEach(tr => {
+      const sp = SPORT[tr.sport];
+      const owner = (getUsers()[tr.ownerId] || {}).name || 'неизвестно';
+      html += `<div class="card">
+        <div class="team-top">
+          <h3>${esc(tr.name)}</h3>
+          <span class="badge ${sp.cls}">${sp.icon} ${sp.name}</span>
+        </div>
+        <div class="meta">👥 ${tr.teams.length} команд · ${tr.groups.length} групп</div>
+        <div class="meta">📨 Заявка от: <b>${esc(owner)}</b></div>
+        <div class="players">
+          ${tr.teams.map(id => `<span class="chip">${esc(teamById(id)?.name || '?')}</span>`).join('')}
+        </div>
+        <div class="card-actions" style="margin-top:14px">
+          <button class="btn sm" onclick="moderateTournament('${tr.id}','approve')">✓ Одобрить</button>
+          <button class="btn danger sm" onclick="moderateTournament('${tr.id}','reject')">✕ Отклонить</button>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  $('#moderationContent').innerHTML = html;
+}
+
+function moderateTeam(id, action) {
+  if (!isAdmin()) return toast('Только для админа', 'err');
+  const t = state.teams.find(x => x.id === id); if (!t) return;
+  if (action === 'approve') { t.status = 'approved'; toast(`Команда «${t.name}» одобрена ✅`); }
+  else {
+    if (!confirm(`Отклонить и удалить команду «${t.name}»?`)) return;
+    state.teams = state.teams.filter(x => x.id !== id);
+    state.matches = state.matches.filter(m => m.teamA !== id && m.teamB !== id);
+    toast('Заявка отклонена и удалена', 'warn');
+  }
+  save(); renderAll();
+}
+function moderateTournament(id, action) {
+  if (!isAdmin()) return toast('Только для админа', 'err');
+  const tr = state.tournaments.find(x => x.id === id); if (!tr) return;
+  if (action === 'approve') { tr.status = 'approved'; toast(`Турнир «${tr.name}» одобрен ✅`); }
+  else {
+    if (!confirm(`Отклонить и удалить турнир «${tr.name}»?`)) return;
+    state.tournaments = state.tournaments.filter(x => x.id !== id);
+    toast('Заявка отклонена и удалена', 'warn');
+  }
+  save(); renderAll();
+}
+
+/* ==========================================================
+   ТОВАРИЩЕСКИЕ МАТЧИ
+   ========================================================== */
+function renderMatches() {
+  const sport = $('#mSport').value;
+  const box = $('#matchesList');
+  const list = state.matches
+    .filter(m => { const a = teamById(m.teamA), b = teamById(m.teamB); if (!a || !b) return false; return !sport || a.sport === sport; })
+    .sort((a,b) => (a.status==='pending'?-1:1) - (b.status==='pending'?-1:1) || a.date.localeCompare(b.date));
+
+  if (!list.length) { box.innerHTML = '<div class="empty">Матчей пока нет. Зайдите в «Команды» и бросьте вызов ⚔️</div>'; return; }
+
+  box.innerHTML = list.map(m => {
+    const a = teamById(m.teamA), b = teamById(m.teamB);
+    const sp = SPORT[m.sport], done = m.status === 'played';
+    return `<div class="match" style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px">
+      <div style="font-weight:700;font-size:15px">${esc(a.name)}<div style="font-size:11px;color:var(--muted);margin-top:3px">${esc(a.city)}</div></div>
+      <div style="text-align:center;min-width:110px">
+        ${done ? `<div style="font-size:20px;font-weight:800;color:#7ff0a4;letter-spacing:1px">${m.scoreA} : ${m.scoreB}</div>` : `<div style="color:var(--muted);font-size:13px;font-weight:700">${sp.icon} VS</div>`}
+        <div style="font-size:11px;color:var(--muted);margin-top:3px">${fmtDate(m.date)}</div>
+      </div>
+      <div style="font-weight:700;font-size:15px;text-align:right">${esc(b.name)}<div style="font-size:11px;color:var(--muted);margin-top:3px">${esc(b.city)}</div></div>
+      <div style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-top:12px;border-top:1px dashed var(--line);margin-top:4px">
+        <span class="badge ${sp.cls}">${sp.icon} ${sp.name}</span>
+        ${done ? `<span style="font-size:13px;color:var(--muted)">✅ Матч завершён</span>` : `
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="number" min="0" id="sa-${m.id}" placeholder="0" style="width:56px;padding:8px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);text-align:center;font-size:14px">
+            <span style="color:var(--muted)">:</span>
+            <input type="number" min="0" id="sb-${m.id}" placeholder="0" style="width:56px;padding:8px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--text);text-align:center;font-size:14px">
+            <button class="btn sm" onclick="reportResult('${m.id}')">Внести счёт</button>
+          </div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+function reportResult(matchId) {
+  const m = state.matches.find(x => x.id === matchId); if (!m) return;
+  const a = parseInt($('#sa-' + matchId).value, 10);
+  const b = parseInt($('#sb-' + matchId).value, 10);
+  if (isNaN(a) || isNaN(b) || a < 0 || b < 0) return toast('Введите корректный счёт', 'err');
+  m.scoreA = a; m.scoreB = b; m.status = 'played';
+  save(); renderAll(); toast('Результат сохранён ✔');
+}
+
+let challengeTargetId = null;
+function openChallenge(opponentId) {
+  const opp = teamById(opponentId); if (!opp) return;
+  const candidates = approvedTeams().filter(t => t.sport === opp.sport && t.id !== opp.id);
+  if (!candidates.length) return toast('Нет других одобренных команд в этом виде спорта', 'err');
+  challengeTargetId = opponentId;
+  $('#modalOpponent').innerHTML = `Соперник: <b>${esc(opp.name)}</b> — ${esc(opp.school)} (${esc(opp.city)})`;
+  $('#challengerSelect').innerHTML = candidates.map(t => `<option value="${t.id}">${esc(t.name)} — ${esc(t.school)}</option>`).join('');
+  const today = new Date().toISOString().slice(0,10);
+  $('#matchDate').min = today; $('#matchDate').value = today;
+  $('#modal').classList.add('open');
+}
+function closeModal() { $('#modal').classList.remove('open'); challengeTargetId = null; }
+function confirmChallenge() {
+  const myId = $('#challengerSelect').value, date = $('#matchDate').value, oppId = challengeTargetId;
+  if (!myId || !oppId) return;
+  if (!date) return toast('Укажите дату', 'err');
+  const opp = teamById(oppId);
+  state.matches.push({ id: uid('m'), teamA: myId, teamB: oppId, sport: opp.sport, date, status: 'pending', scoreA: null, scoreB: null });
+  save(); renderAll(); closeModal(); toast('Вызов отправлен — матч добавлен 📅');
+}
+
+/* ==========================================================
+   СТАТИСТИКА
+   ========================================================== */
+function renderStats() {
+  const appr = approvedTeams();
+  const teams = appr.length;
+  const players = appr.reduce((s,t) => s + t.players.length, 0);
+  const played = state.matches.filter(m => m.status === 'played').length;
+  const pending = state.matches.filter(m => m.status === 'pending').length;
+  const cities = new Set(appr.map(t => t.city)).size;
+  const tournCount = state.tournaments.filter(t => t.status === 'approved').length;
+
+  $('#statCards').innerHTML = [
+    { b: teams, s: 'Команд' },
+    { b: players, s: 'Игроков' },
+    { b: cities, s: 'Городов' },
+    { b: played, s: 'Сыграно матчей' },
+    { b: pending, s: 'Ожидают' },
+    { b: tournCount, s: 'Турниров' }
+  ].map(x => `<div class="stat"><b>${x.b}</b><span>${x.s}</span></div>`).join('');
+
+  const cityRows = {};
+  appr.forEach(t => {
+    if (!cityRows[t.city]) cityRows[t.city] = { teams:0, players:0, matches:0 };
+    cityRows[t.city].teams++;
+    cityRows[t.city].players += t.players.length;
+  });
+  state.matches.forEach(m => {
+    const a = teamById(m.teamA); if (!a) return;
+    if (cityRows[a.city]) cityRows[a.city].matches++;
+  });
+
+  $('#cityStatsBody').innerHTML = Object.entries(cityRows)
+    .sort((a,b) => b[1].teams - a[1].teams)
+    .map(([c,s]) => `<tr>
+      <td><b>${esc(c)}</b></td>
+      <td>${s.teams}</td>
+      <td>${s.players}</td>
+      <td>${s.matches}</td>
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:30px">Нет данных</td></tr>';
+
+  const byCity = {};
+  appr.forEach(t => {
+    const d = t.district || 'Не указан';
+    if (!byCity[t.city]) byCity[t.city] = {};
+    if (!byCity[t.city][d]) byCity[t.city][d] = { teams:0, players:0 };
+    byCity[t.city][d].teams++;
+    byCity[t.city][d].players += t.players.length;
+  });
+  let dHtml = '';
+  Object.entries(byCity).sort().forEach(([city, districts]) => {
+    dHtml += `<h3 style="font-size:14px;color:var(--accent);margin:14px 0 8px">📍 ${esc(city)}</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Район</th><th>Команд</th><th>Игроков</th></tr></thead><tbody>`;
+    Object.entries(districts).forEach(([d,s]) => {
+      dHtml += `<tr><td>${esc(d)}</td><td>${s.teams}</td><td>${s.players}</td></tr>`;
+    });
+    dHtml += `</tbody></table></div>`;
+  });
+  $('#districtStats').innerHTML = dHtml || '<p class="meta">Нет данных</p>';
+
+  const bySport = { football:0, basketball:0, volleyball:0, tennis:0 };
+  appr.forEach(t => bySport[t.sport]++);
+  const maxSport = Math.max(1, ...Object.values(bySport));
+  $('#sportBars').innerHTML = Object.entries(SPORT).map(([key, sp]) => {
+    const v = bySport[key];
+    return `<div class="bar-row">
+      <div class="bar-label"><span>${sp.icon} ${sp.name}</span><span>${v} ком.</span></div>
+      <div class="bar"><i style="width:${(v/maxSport)*100}%;background:${sp.color}"></i></div>
+    </div>`;
+  }).join('');
+
+  const cityArr = Object.entries(cityRows).sort((a,b) => b[1].teams - a[1].teams).slice(0, 8);
+  $('#cityBars').innerHTML = cityArr.length
+    ? cityArr.map(([c, s]) => {
+        const max = cityArr[0][1].teams;
+        return `<div class="bar-row">
+          <div class="bar-label"><span>📍 ${esc(c)}</span><span>${s.teams}</span></div>
+          <div class="bar"><i style="width:${(s.teams/max)*100}%;background:var(--accent)"></i></div>
+        </div>`;
+      }).join('')
+    : '<p class="meta">Пока нет данных</p>';
+}
+
+/* ==========================================================
+   ОБЩИЙ РЕНДЕР
+   ========================================================== */
+function renderAll() {
+  renderTeams();
+  renderTable();
+  renderTournaments();
+  renderMatches();
+  renderStats();
+  if (isAdmin()) renderModeration();
+  else $('#moderationContent').innerHTML = '';
+}
+
+/* ==========================================================
+   ИНИЦИАЛИЗАЦИЯ
+   ========================================================== */
+function init() {
+  load();
+  initAuth();
+
+  const cityOptions = CITIES.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+  $('#citySelect').innerHTML = '<option value="">— выберите город —</option>' + cityOptions;
+  $('#fCity').innerHTML = '<option value="">Все города</option>' + cityOptions;
+  $('#tCity').innerHTML = '<option value="">Все города</option>' + cityOptions;
+  $('#tournCityFilter').innerHTML = '<option value="">Все города</option>' + cityOptions;
+  $('#tCreateCity').innerHTML = '<option value="">Все города</option>' + cityOptions;
+
+  $('#citySelect').addEventListener('change', e => {
+    const city = e.target.value;
+    const sel = $('#schoolSelect');
+    if (!city) { sel.innerHTML = '<option value="">— сначала выберите город —</option>'; sel.disabled = true; return; }
+    const schools = getSchools(city);
+    const groups = {};
+    schools.forEach(s => { (groups[s.district] = groups[s.district] || []).push(s); });
+    let html = '<option value="">— выберите школу —</option>';
+    Object.entries(groups).forEach(([district, list]) => {
+      html += `<optgroup label="${esc(district)} район (${list.length})">`;
+      list.forEach(s => html += `<option data-district="${esc(s.district)}" value="${esc(s.name)}">${esc(s.name)}</option>`);
+      html += `</optgroup>`;
+    });
+    sel.innerHTML = html;
+    sel.disabled = false;
+  });
+
+  function addPlayerRow() {
+    const row = document.createElement('div');
+    row.className = 'player-row';
+    row.innerHTML = `<input class="p-name" placeholder="ФИО игрока" maxlength="60">
+      <input class="p-num" type="number" min="1" max="99" placeholder="№">
+      <button type="button" class="icon-btn del">✕</button>`;
+    row.querySelector('.del').onclick = () => row.remove();
+    $('#playersList').appendChild(row);
+  }
+  $('#addPlayer').addEventListener('click', addPlayerRow);
+  addPlayerRow(); addPlayerRow(); addPlayerRow();
+
+  $('#regForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const city = $('#citySelect').value;
+    const schoolSel = $('#schoolSelect');
+    const schoolOpt = schoolSel.options[schoolSel.selectedIndex];
+    const school = schoolSel.value;
+    const district = schoolOpt?.dataset?.district || '';
+    const sportEl = document.querySelector('input[name="sport"]:checked');
+    const name = $('#teamName').value.trim();
+    const captain = $('#captain').value.trim();
+    const contact = $('#contact').value.trim();
+
+    if (!city) return toast('Выберите город', 'err');
+    if (!school) return toast('Выберите школу', 'err');
+    if (!sportEl) return toast('Выберите вид спорта', 'err');
+    if (name.length < 2) return toast('Слишком короткое название', 'err');
+    if (!captain) return toast('Укажите капитана', 'err');
+    if (!contact) return toast('Укажите контакт', 'err');
+    if (!$('#agree').checked) return toast('Подтвердите принадлежность к школе', 'err');
+    if (state.teams.some(t => t.name.toLowerCase() === name.toLowerCase() && t.city === city && t.sport === sportEl.value))
+      return toast('Такая команда уже зарегистрирована', 'err');
+
+    const players = $$('#playersList .player-row')
+      .map(r => ({ name: r.querySelector('.p-name').value.trim(), num: r.querySelector('.p-num').value.trim() }))
+      .filter(p => p.name.length > 0);
+    if (!players.length) return toast('Добавьте хотя бы одного игрока', 'err');
+
+    const admin = isAdmin();
+    state.teams.push({
+      id: uid('t'), name, city, district, school,
+      sport: sportEl.value, captain, contact, players,
+      ownerId: currentUser?.id,
+      status: admin ? 'approved' : 'pending',
+      createdAt: Date.now()
+    });
+    save(); renderAll();
+
+    e.target.reset();
+    $('#schoolSelect').innerHTML = '<option value="">— сначала выберите город —</option>';
+    $('#schoolSelect').disabled = true;
+    $('#playersList').innerHTML = '';
+    addPlayerRow(); addPlayerRow(); addPlayerRow();
+
+    if (admin) { toast('Команда создана ✅'); switchTab('teams'); }
+    else toast('Заявка на команду отправлена на модерацию 📨', 'warn');
+  });
+
+  $('#fCity').addEventListener('change', renderTeams);
+  $('#fSport').addEventListener('change', renderTeams);
+  $('#fSearch').addEventListener('input', renderTeams);
+  $('#tSport').addEventListener('change', renderTable);
+  $('#tCity').addEventListener('change', renderTable);
+  $('#mSport').addEventListener('change', renderMatches);
+  $('#tournCityFilter').addEventListener('change', renderTournaments);
+  $('#tCreateSport').addEventListener('change', updateTournamentTeamList);
+  $('#tCreateCity').addEventListener('change', updateTournamentTeamList);
+
+  $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+  $('#createTournModal').addEventListener('click', e => { if (e.target.id === 'createTournModal') closeCreateTournament(); });
+  $('#tournamentModal').addEventListener('click', e => { if (e.target.id === 'tournamentModal') closeTournamentModal(); });
+  $('#profileModal').addEventListener('click', e => { if (e.target.id === 'profileModal') closeProfile(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeCreateTournament(); closeTournamentModal(); closeProfile(); } });
+
+  $('#authForm').addEventListener('submit', handleAuth);
+  $('#profileBtn').addEventListener('click', openProfile);
+
+  $('#exportBtn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'school-sport-rb.json'; a.click();
+    URL.revokeObjectURL(a.href); toast('Файл сохранён');
+  });
+  $('#resetBtn').addEventListener('click', () => {
+    if (!isAdmin()) return;
+    if (!confirm('Удалить ВСЕ команды, матчи и турниры?')) return;
+    state = { teams: [], matches: [], tournaments: [] };
+    save(); renderAll(); toast('Данные сброшены');
+  });
+
+  $$('nav button').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+  updateProfileBtn();
+  updateNav();
+  if (!currentUser) showAuthScreen();
+  else { hideAuthScreen(); renderAll(); }
+}
+
+function switchTab(tab) {
+  $$('nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  $$('.tab').forEach(s => s.classList.toggle('active', s.id === 'tab-' + tab));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+init();
+</script>
+</body>
+</html>
